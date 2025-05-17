@@ -1,0 +1,254 @@
+import { StyleSheet, View, ScrollView, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import ReviewCart from './ReviewCart/ReviewCart';
+import { apiBase, apiService } from '../../services/api';
+import PickupAddress from './PickupAddress/PickupAddress';
+import DeliveryAddress from './DeliveryAddress/DeliveryAddress';
+import DeliverySlots from './DeliverySlots/DeliverySlots';
+import Coupons from './Coupons/Coupons';
+
+const OrderConfirmation = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [paymentOptions, setPaymentOptions] = useState([]);
+  const [deliveryModes, setDeliveryModes] = useState([]);
+  const [stall, setStall] = useState(defaultStall);
+  const [address, setAddress] = useState(defaultAddress);
+  const [currentContext, setCurrentContext] = useState(defaultContext);
+  const [availableSlots, setAvailableSlots] = useState([]);
+
+  const allDeliveryModes = [
+    { text: 'Delivery', name: 'deliverymode', value: 'Delivery', checked: true },
+    { text: 'Pickup', name: 'deliverymode', value: 'Pickup', checked: false }
+  ];
+  const allPaymentOptions = [
+    { text: 'Cash On Delivery', name: 'paymentoption', value: 'cod', checked: false },
+    { text: 'Razorpay (UPI, Credit/Debit Card, NetBanking)', name: 'paymentoption', value: 'razorpay', checked: true }
+  ];
+
+  let defaultStall = { address: '', id: 0, name: '', slug: '' };
+  let defaultAddress = { fullName: null, mobile: '', fullAddress: '', id: 0 };
+  let defaultContext = {
+    deliveryMode: 'Delivery',
+    deliveryCharge: 0,
+    deliveryChargeMsg: null,
+    addressId: 0,
+    deliverySlotId: 0,
+    selectedUserCouponId: 0,
+    paymentMode: 'razorpay',
+    selectedCouponValue: 0,
+    doorDeliveryMsg: "You will be notified once the order is shipped!",
+    pickupDeliveryMsg: "You will be notified once the order is ready!",
+    selectedCouponId: 0,
+    selectedCouponValueTypeId: 2, // 2-Value
+    minimumOrderAmount: null
+  };
+
+  const getStallById = async () => {
+    try {
+      const response = await apiService.get(`${apiBase.API_BASE}/portal/stall/1116`, apiBase.token);
+      setProducts(response.data || []);
+     // console.log('getStallById From OrderConfirmation page:', response.data);
+      getStallCallBack(response.data);
+    } catch (error) {
+      console.error('Error fetching featured products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStallCallBack = (res) => {
+    setStall(res);
+    let deliveryModes = [];
+    if (res.isDeliveryEnabled == 1 && res.isPickupEnabled == 0) {
+      for (let item of allDeliveryModes) {
+        if (item.value == "Delivery") {
+          item.checked = true;
+          deliveryModes.push(item);
+        }
+      }
+    } else if (res.isDeliveryEnabled == 0 && res.isPickupEnabled == 1) {
+      for (let item of allDeliveryModes) {
+        if (item.value == "Pickup") {
+          item.checked = true;
+          deliveryModes.push(item);
+        }
+      }
+      setCurrentContext(prevState => ({ ...prevState, deliveryMode: "Pickup" }));
+    } else {
+      deliveryModes = allDeliveryModes;
+    }
+    setDeliveryModes(deliveryModes);
+  };
+
+  const getDefaultAddress = async () => {
+    try {
+      const response = await fetch('https://api.localites.in/api/address/default/query', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDI5MDIzNzcsImF1ZCI6InpmLmxvY2FsaXRlcy5tb2JpbGUiLCJpc3MiOiJ6Zl9pZHBfc2VydmljZXNfdjEiLCJpYXQiOjE3NDE2OTI3NzcsInN1YiI6MTEzNzQsImRhdGEiOnsibmFtZSI6ImxvY2FsaXRlcyIsImFwcGxpY2F0aW9uIjoiemYubG9jYWxpdGVzLmFwaSJ9fQ.Antv94A2GHIA9vv67Ix0tjMSukVML0fLO4VKYwYtzZc',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+      //console.log('getDefaultAddress From OrderConfirmation page:', data);
+      getDefaultAddressCallBack(data);
+    } catch (error) {
+      console.error('Error fetching default address:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getDefaultAddressCallBack = (res) => {
+    setAddress(res);
+    setCurrentContext(prevState => ({
+      ...prevState,
+      addressId: res.id > 0 ? res.id : 0
+    }));
+  };
+
+  const formatService = {
+    getCurrentDateForServer: () => {
+      let date = new Date();
+      return date.toISOString().split('T')[0]; // YYYY-MM-DD
+    },
+  
+    getCurrentTimeForServer: () => {
+      let date = new Date();
+      return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+    },
+  
+    getDateStringForServer: (date) => {
+      if (!date) return null;
+      return new Date(date).toISOString().split('T')[0]; // Converts Date to YYYY-MM-DD
+    },
+  };
+  
+  const general = {
+    getFormattedTime: (time) => {
+      if (!time) return null;
+      let [hours, minutes] = time.split(':');
+      let suffix = hours >= 12 ? 'PM' : 'AM';
+      hours = ((hours % 12) || 12).toString().padStart(2, '0'); // Convert 24h to 12h format
+      return `${hours}:${minutes} ${suffix}`;
+    },
+  };
+  
+  const getAvailableSlots = async () => {
+    let inputData = { stallId: stallId };
+    let apiOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'your-token-here',
+      },
+      body: JSON.stringify(inputData),
+    };
+  
+    try {
+      let response = await fetch('https://api.localites.in/api/stalldeliveryslot/available', apiOptions);
+      let res = await response.json();
+      getAvailableSlotsCallBack(res);
+    } catch (error) {
+      console.error('Error fetching available slots:', error);
+    }
+  };
+  
+  const getAvailableSlotsCallBack = (res) => {
+    const result = res.data;
+    if (result.deliverySlots.length > 0) {
+      let filteredSlots = filterCurrentDaySlots(result.deliverySlots);
+      filteredSlots.forEach((item) => {
+        item.startTime = item.startTime ? general.getFormattedTime(item.startTime) : null;
+        item.endTime = item.endTime ? general.getFormattedTime(item.endTime) : null;
+      });
+      setAvailableSlots(filteredSlots);
+    } else {
+      setAvailableSlots([]);
+    }
+  
+    setCurrentContext((prevState) => ({
+      ...prevState,
+      deliverySlotId: 0,
+    }));
+  };
+  
+  const filterCurrentDaySlots = (slotList) => {
+    let currentDate = formatService.getCurrentDateForServer();
+    let currentTime = formatService.getCurrentTimeForServer();
+    let selectedDate = formatService.getDateStringForServer(currentContext.selectedDeliveryDate);
+  
+    if (currentDate === selectedDate) {
+      slotList = slotList.filter((i) => i.startTime > currentTime);
+    }
+    return slotList;
+  };
+
+  useEffect(() => {
+    getStallById();
+    getDefaultAddress();
+    getAvailableSlots();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <ScrollView>
+          <View style={styles.section}>
+            <PickupAddress stall={stall} />
+          </View>
+
+          <View style={styles.section}>
+            <DeliveryAddress address={address} />
+          </View>
+
+          <View style={styles.section}>
+            <DeliverySlots availableSlots={availableSlots} />
+          </View>
+
+          <View style={styles.section}>
+            <Coupons  />
+          </View>
+
+          <TouchableOpacity style={styles.confirmButton}>
+            <Text style={styles.buttonText}>Confirm Order</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      )}
+    </View>
+  );
+};
+
+export default OrderConfirmation;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f9f9f9',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+  },
+  section: {
+    backgroundColor: '#fff',
+    padding: 15,
+    marginBottom: 10,
+    borderRadius: 8,
+    elevation: 2,
+  },
+  confirmButton: {
+    backgroundColor: '#28a745',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginVertical: 15,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+      fontFamily:Fonts.bold,
+  },
+});

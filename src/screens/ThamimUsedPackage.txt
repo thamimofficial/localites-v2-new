@@ -1,0 +1,20 @@
+BottomNavigation.jsx
+Carousel.jsx
+AppBar.jsx
+StackNavigation.jsx
+Api.jsx
+
+
+
+npm install @reduxjs/toolkit react-redux
+
+
+
+1 Location.jsx  - Choose Location front page 
+2 Loader.js - For loading time 
+3.ButtonStyles.js - ButtonStyles
+
+
+
+Packages 
+1.     "react-native-dropdown-picker": "^5.4.6",
