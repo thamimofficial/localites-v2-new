@@ -176,7 +176,7 @@ export default function ItemWiseStallsCard() {
                                             />
                                         </View>
 
-                                        <View style={styles.frameParent}>
+                                        {/* <View style={styles.frameParent}> */}
                                             <View style={[styles.sellerNameParent, styles.frameWrapperFlexBox]}>
                                                 <Text
                                                     style={[
@@ -188,15 +188,15 @@ export default function ItemWiseStallsCard() {
                                                     {item.name}
                                                 </Text>
 
-                                                {item.isVerified && (
+                                                {/* {item.isVerified && (
                                                     <Image
                                                         source={{ uri: Images.Verify }}
                                                         style={styles.verifyIcon}
                                                     />
-                                                )}
+                                                )} */}
                                             </View>
 
-                                            <View style={[styles.frameGroup, styles.frameWrapperFlexBox]}>
+                                            {/* <View style={[styles.frameGroup, styles.frameWrapperFlexBox]}>
                                                 <View style={[styles.locationParent, styles.frameWrapperFlexBox]}>
                                                     <Text style={styles.location}>Delivery</Text>
                                                     <Image
@@ -214,11 +214,11 @@ export default function ItemWiseStallsCard() {
                                                         source={item.isPickupEnabled ? Images.tickcircle : Images.closecircle}
                                                     />
                                                 </View>
-                                            </View>
+                                            </View> */}
                                         </View>
                                     </View>
                                 </View>
-                            </View>
+                            {/* </View> */}
                         </TouchableOpacity>
                     ))}
                 </ScrollView>

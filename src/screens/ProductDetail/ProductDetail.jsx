@@ -492,12 +492,12 @@ const getStallDetailsById = async () => {
             style={styles.secondaryButton}
             onPress={() => navigation.goBack()}
           >
-            <Text style={styles.secondaryButtonText}>Seller's other items</Text>
+            <Text style={styles.secondaryButtonText}>Other items</Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
             style={styles.outlineButton}
-            onPress={() => navigation.goBack()}
+            onPress={() => navigation.navigate('DirectMessage',{inputId:product.stallId,typeName:'stallId'})}
           >
             <Text style={styles.outlineButtonText}>Contact seller</Text>
           </TouchableOpacity>

@@ -9,6 +9,7 @@ import BackButton from '../CoreComponent/BackButton/BackButton';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Images from '../../constants/Images';
 import Fonts from '../../constants/Font';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 
@@ -68,7 +69,7 @@ export default function BookingWiseStallsCard() {
 
   
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <BackButton/>
             <Text style={styles.Slug}>{serviceName}</Text>
 
@@ -116,7 +117,7 @@ export default function BookingWiseStallsCard() {
                                             />
                                         </View>
 
-                                        <View style={styles.frameParent}>
+                                        {/* <View style={styles.frameParent}> */}
                                             <View style={[styles.sellerNameParent, styles.frameWrapperFlexBox]}>
                                                 <Text
                                                     style={[
@@ -131,7 +132,7 @@ export default function BookingWiseStallsCard() {
                                                 {item.isVerified && <Image source={{uri:Images.Verify}} style={styles.verifyIcon} />}
                                             </View>
 
-                                            <View style={[styles.frameGroup, styles.frameWrapperFlexBox]}>
+                                            {/* <View style={[styles.frameGroup, styles.frameWrapperFlexBox]}>
                                                 <View style={[styles.locationParent, styles.frameWrapperFlexBox]}>
                                                     <Text style={styles.location}>Delivery</Text>
                                                     <Image
@@ -150,16 +151,16 @@ export default function BookingWiseStallsCard() {
                                                     />
                                                 </View>
                                               
-                                            </View>
+                                            </View> */}
                                         </View>
                                     </View>
                                 </View>
-                            </View>
+                            {/* </View> */}
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
             )}
-        </View>
+        </SafeAreaView>
     );
 }
 
