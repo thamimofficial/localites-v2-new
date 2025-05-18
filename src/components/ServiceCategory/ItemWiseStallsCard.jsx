@@ -11,6 +11,7 @@ import Fonts from '../../constants/Font';
 import Images from '../../constants/Images';
 import StorageService from '../../services/StorageService/storageService';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function ItemWiseStallsCard() {
     const navigation = useNavigation();
@@ -102,8 +103,13 @@ export default function ItemWiseStallsCard() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <BackButton />
+            {/* <BackButton /> */}
+            <View>
+                <TouchableOpacity onPress={()=>navigation.goBack()}>
+            <Ionicons name="arrow-back" size={24} color="#000" style={styles.icon} />
+                </TouchableOpacity>
             <Text style={styles.Slug}>{serviceName}</Text>
+            </View>
 
             <View style={styles.searchContainer}>
                 <TextInput

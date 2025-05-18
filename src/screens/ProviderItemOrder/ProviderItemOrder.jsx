@@ -525,7 +525,7 @@ const styles = StyleSheet.create({
     minWidth: 45,
   },
    actionButton: {
-    backgroundColor: '#f69516',
+    backgroundColor: Colors.Green,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 4,

@@ -31,7 +31,7 @@ const BottomNavigation = ({ defaultTab }) => {
     ? [
         { name: "Home", icon: "home", screen: "Home" },
         { name: "Account", icon: "account", screen: "Account" },
-        { name: "Notification", icon: "message", screen: "Notification" },
+        { name: "Notification", icon: "bell", screen: "Notification" },
         { name: "Menu", icon: "menu", screen: "MenuScreen" },
       ]
     : [

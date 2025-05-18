@@ -12,6 +12,7 @@ import { addCart, reduceCart } from '../redux/cartSlice';
 import { useDispatch } from 'react-redux';
 import StorageService from '../services/StorageService/storageService';
 import { DateFormat } from '../components/CoreComponent/GlobalServices/DateFormat';
+import BackButton from '../components/CoreComponent/BackButton/BackButton';
 // import StallHeader from './StallHeader';
 // import StallItem from '../StallItem/StallItem';
 // import StallBooking from '../StallBookingBehavior/StallBooking';
@@ -324,6 +325,7 @@ const Stall = ({ route, navigation }) => {
 
     return (
 <SafeAreaView style={styles.container}>
+    <BackButton />
     <AppBar />
 
 

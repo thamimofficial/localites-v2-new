@@ -68,9 +68,13 @@ useEffect(()=>{
   };
 
   const handleLogoutConfirm = async () => {
-    await AsyncStorage.clear();
+   // await AsyncStorage.clear();
+            await StorageService.removeItem('user');
+            await StorageService.removeItem('imagStorageUrl');
+            await StorageService.removeItem('sessionId');
+            await StorageService.removeItem('userId'); 
     setModalVisible(false);
-    navigation.replace('Location'); // replace with your login/start screen
+    navigation.replace('Home'); // replace with your login/start screen
   };
 
   return (

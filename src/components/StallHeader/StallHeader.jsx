@@ -280,10 +280,11 @@ const getStallBanner = async () => {
 
           <View style={styles.titleBlock}>
             <View style={styles.titleRow}>
-              <Text style={styles.title}>{stall.name}</Text>
-              {stall.isVerified && (
+              <Text style={styles.title}>{stall.name}
+                {stall.isVerified && (
                 <MaterialIcons name="verified" size={20} color="#4285f4" />
-              )}
+              )}</Text>
+            
             </View>
 
             {stall.communityName && (
