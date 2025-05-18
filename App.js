@@ -21,6 +21,7 @@ const App = () => {
 
   // In-App Update logic
   useEffect(() => {
+    console.log("app.jsx")
     if (Platform.OS === 'android') {
       const inAppUpdates = new InAppUpdates(true); // true enables debug logs
       inAppUpdates.checkNeedsUpdate().then(result => {
@@ -31,9 +32,9 @@ const App = () => {
     } else if (Platform.OS === 'ios') {
       VersionCheck.needUpdate().then(res => {
         if (res?.isNeeded) {
-  console.log('iOS Update Available');
- Alert.alert('Update', 'Update available');
-}
+      console.log('iOS Update Available');
+      Alert.alert('Update', 'Update available');
+    }
 
         if (res?.isNeeded) {
           Alert.alert(

@@ -1,4 +1,13 @@
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    TextInput,
+    ScrollView,
+    TouchableOpacity,
+    Image,
+    Dimensions
+} from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { apiBase, apiService } from '../../services/api';
@@ -9,11 +18,10 @@ import BackButton from '../CoreComponent/BackButton/BackButton';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Images from '../../constants/Images';
 import Fonts from '../../constants/Font';
+import StorageService from '../../services/StorageService/storageService';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-
-
-const { width } = Dimensions.get('window'); // Get device width for responsiveness
+const { width } = Dimensions.get('window');
 
 export default function BookingWiseStallsCard() {
     const route = useRoute();
@@ -26,18 +34,19 @@ export default function BookingWiseStallsCard() {
     const [loading, setLoading] = useState(true);
     const [bookingStalls, setBookingStalls] = useState([]);
     const [searchText, setSearchText] = useState('');
+    const [stallBanners, setStallBanners] = useState({});
 
     const getServiceBySlug = useCallback(async () => {
         try {
             const response = await apiService.get(`/portal/service/${Slug}`);
             setServiceName(response.data?.serviceName || '');
-            getBookingStalls({}, ServiceId);
+            await getBookingStalls({}, ServiceId);
         } catch (error) {
-            console.error("Error fetching service", error);
+            console.error('Error fetching service:', error);
         }
-    });
+    }, [Slug, ServiceId]);
 
-    const getBookingStalls = useCallback(async (data, serviceId) => {
+    const getBookingStalls = useCallback(async (data = {}, serviceId) => {
         if (!serviceId) return;
         setLoading(true);
         try {
@@ -45,66 +54,80 @@ export default function BookingWiseStallsCard() {
                 serviceId,
                 currentDate: DateFormat.getCurrentDateTime(),
                 communityId,
-                stallName: data.stallName || ""
+                stallName: data.stallName || ''
             });
-            setBookingStalls(response.data.items || []);
+            const stalls = response.data.items || [];
+            setBookingStalls(stalls);
+            await fetchBannersForStalls(stalls);
         } catch (error) {
-            console.error("Error fetching booking stalls:", error);
+            console.error('Error fetching booking stalls:', error);
         } finally {
             setLoading(false);
         }
-    });
+    }, [communityId]);
 
     const handleSearch = (text) => {
         setSearchText(text);
         getBookingStalls({ stallName: text }, ServiceId);
     };
 
+    const fetchBannersForStalls = async (stallList) => {
+        const token = await StorageService.getItem('sessionId');
+        if (!token || !stallList || !stallList.length) return;
+
+        const bannersMap = {};
+        for (const stall of stallList) {
+            try {
+                const response = await apiService.get(`/stallbanner/stall/${stall.id}`, token);
+                const banners = response.data;
+                if (banners?.length > 0 && banners[0].isActive) {
+                    bannersMap[stall.id] = banners[0];
+                }
+            } catch (error) {
+                console.error(`Error fetching banner for stall ${stall.id}:`, error);
+            }
+        }
+        setStallBanners(bannersMap);
+    };
+
     useEffect(() => {
         if (Slug && communityId) {
             getServiceBySlug();
         }
-    }, [Slug,communityId]);
+    }, [Slug, communityId]);
 
-
-  
     return (
         <SafeAreaView style={styles.container}>
-            <BackButton/>
+            <BackButton />
             <Text style={styles.Slug}>{serviceName}</Text>
 
             <View style={styles.searchContainer}>
-            <TextInput
-                value={searchText}
-                onChangeText={handleSearch}
-                placeholder="Search"
-                placeholderTextColor="#999"
-                style={styles.search}
-            />
-            <EvilIcons name="search" size={24} color="black" style={styles.searchIcon} />
-        </View>
-                    {loading ? (
+                <TextInput
+                    value={searchText}
+                    onChangeText={handleSearch}
+                    placeholder="Search"
+                    placeholderTextColor="#999"
+                    style={styles.search}
+                />
+                <EvilIcons name="search" size={24} color="black" style={styles.searchIcon} />
+            </View>
+
+            {loading ? (
                 <Loader visible={loading} />
             ) : bookingStalls.length === 0 ? (
                 <Text style={{ textAlign: 'center', marginTop: 20 }}>No stalls available</Text>
             ) : (
                 <ScrollView>
                     {bookingStalls.map((item, index) => (
-                        <TouchableOpacity key={index} onPress={() => {navigation.navigate('Stall', { code:communityId, slug:item.slug })}}>
-                            <View
-                                style={[
-                                    styles.sellerTile,
-                                    item.CommunityRank === 10 && styles.outsideCommunityTile
-                                ]}
-                            >
+                        <TouchableOpacity key={index} onPress={() => navigation.navigate('Stall', { code: communityId, slug: item.slug })}>
+                            <View style={[styles.sellerTile, item.CommunityRank === 10 && styles.outsideCommunityTile]}>
                                 <Image
-                                    style={[
-                                        styles.imageIcon,
-                                        styles.imageIconPosition,
-                                        item.CommunityRank === 10 && styles.orangeShadowImage
-                                    ]}
-                                    resizeMode="cover"
-                                    source={{uri:Images.storefront}}
+                                    source={{
+                                        uri: stallBanners[item.id]
+                                            ? `${apiBase.imagePath}${stallBanners[item.id].imagePath}`
+                                            : Images.storefront
+                                    }}
+                                    style={[styles.imageIcon, styles.imageIconPosition, item.CommunityRank === 10 && styles.orangeShadowImage]}
                                 />
                                 <View style={[styles.sellerTileInner, styles.imageIconPosition]}>
                                     <View style={styles.groupParent}>
@@ -116,22 +139,13 @@ export default function BookingWiseStallsCard() {
                                                 source={{ uri: `${apiBase.imagePath}${item.imagePath}` }}
                                             />
                                         </View>
-
                                         {/* <View style={styles.frameParent}> */}
                                             <View style={[styles.sellerNameParent, styles.frameWrapperFlexBox]}>
-                                                <Text
-                                                    style={[
-                                                        styles.sellerName,
-                                                        styles.offTypo,
-                                                        item.CommunityRank === 10 && styles.orangeShadowText
-                                                    ]}
-                                                >
+                                                <Text style={[styles.sellerName, styles.offTypo, item.CommunityRank === 10 && styles.orangeShadowText]}>
                                                     {item.name}
                                                 </Text>
-                                              
-                                                {item.isVerified && <Image source={{uri:Images.Verify}} style={styles.verifyIcon} />}
+                                                {item.isVerified && <Image source={{ uri: Images.Verify }} style={styles.verifyIcon} />}
                                             </View>
-
                                             {/* <View style={[styles.frameGroup, styles.frameWrapperFlexBox]}>
                                                 <View style={[styles.locationParent, styles.frameWrapperFlexBox]}>
                                                     <Text style={styles.location}>Delivery</Text>
@@ -141,7 +155,6 @@ export default function BookingWiseStallsCard() {
                                                         source={item.isDeliveryEnabled ? Images.tickcircle : Images.closecircle}
                                                     />
                                                 </View>
-
                                                 <View style={[styles.locationParent, styles.frameWrapperFlexBox]}>
                                                     <Text style={styles.location}>Pickup</Text>
                                                     <Image
@@ -150,7 +163,6 @@ export default function BookingWiseStallsCard() {
                                                         source={item.isPickupEnabled ? Images.tickcircle : Images.closecircle}
                                                     />
                                                 </View>
-                                              
                                             </View> */}
                                         </View>
                                     </View>
@@ -310,5 +322,3 @@ const styles = StyleSheet.create({
         elevation: 6,
     },
 });
-
-
