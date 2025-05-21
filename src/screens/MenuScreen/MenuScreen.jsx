@@ -67,7 +67,7 @@ useEffect(()=>{
     setModalVisible(true);
   };
 
-  const handleLogoutConfirm = async () => {
+ const handleLogoutConfirm = async () => {
    // await AsyncStorage.clear();
             await StorageService.removeItem('user');
             await StorageService.removeItem('imagStorageUrl');
@@ -152,6 +152,12 @@ useEffect(()=>{
         }
 
       </ScrollView>
+      
+<View style={{ alignItems: 'center', marginBottom: 100 }}>
+  <Text style={{ color: Colors.Grey, fontFamily: Fonts.regular, fontSize: 13 }}>
+    V 2.0.2
+  </Text>
+</View>
 
       {/* Bottom Navigation */}
       <BottomNavigation defaultTab="Menu" />

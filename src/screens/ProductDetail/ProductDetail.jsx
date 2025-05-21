@@ -56,7 +56,7 @@ const ProductDetail = ({ route }) => {
 
 
    const deliveryTimeUnits = {
-    1:"Miniutes",
+    1:"Minutes",
     2:"Hours",
     3:"Days"
    }
@@ -334,7 +334,7 @@ const getStallDetailsById = async () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <BackButton style={styles.backButton} />
+              <BackButton style={styles.backButton} />
       <AppBar />
 
       {isCustomized == true ?(
@@ -355,7 +355,7 @@ const getStallDetailsById = async () => {
           {/* Image Carousel */}
           <View style={styles.carouselWrapper}>
           <View style={{left:5}}>
-        
+
         </View>
             <ScrollView
               horizontal

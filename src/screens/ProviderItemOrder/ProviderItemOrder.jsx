@@ -8,6 +8,7 @@ import { apiService } from '../../services/api';
 import Loader from '../../components/Loader/Loader';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProviderItemOrder({ stallId }) {
   const navigation = useNavigation();
@@ -131,8 +132,8 @@ export default function ProviderItemOrder({ stallId }) {
       
       // Success alert
       setAlertTitle('Success');
-      setAlertMessage(`Order ${order.orderIdentifier} has been accepted successfully.`);
-      setModalVisible(true);
+      // setAlertMessage(`Order ${order.orderIdentifier} has been accepted successfully.`);
+      // setModalVisible(true);
       
       await getOrderList(); // Refresh
     } catch (error) {
@@ -153,8 +154,8 @@ export default function ProviderItemOrder({ stallId }) {
       // Success alert
       const actionText = order.orderTypeID === 1 ? "shipped" : "marked as ready for pickup";
       setAlertTitle('Success');
-      setAlertMessage(`Order ${order.orderIdentifier} has been ${actionText} successfully.`);
-      setModalVisible(true);
+      // setAlertMessage(`Order ${order.orderIdentifier} has been ${actionText} successfully.`);
+      // setModalVisible(true);
       
       await getOrderList(); // Refresh
     } catch (error) {
@@ -178,8 +179,8 @@ export default function ProviderItemOrder({ stallId }) {
       
       // Success alert
       setAlertTitle('Success');
-      setAlertMessage(`Order ${order.orderIdentifier} has been marked as delivered.`);
-      setModalVisible(true);
+      // setAlertMessage(`Order ${order.orderIdentifier} has been marked as delivered.`);
+      // setModalVisible(true);
       
       await getOrderList(); // Refresh
     } catch (error) {
@@ -203,8 +204,8 @@ export default function ProviderItemOrder({ stallId }) {
       
       // Success alert
       setAlertTitle('Success');
-      setAlertMessage(`Order ${order.orderIdentifier} has been cancelled.`);
-      setModalVisible(true);
+      // setAlertMessage(`Order ${order.orderIdentifier} has been cancelled.`);
+      // setModalVisible(true);
       
       await getOrderList(); // Refresh
     } catch (error) {
@@ -365,7 +366,7 @@ export default function ProviderItemOrder({ stallId }) {
   };
 
   return (
-    <View style={{ flex: 1, paddingBottom: 30 }}>
+    <SafeAreaView style={{ flex: 1, paddingBottom: 30 }}>
       {/* Filter buttons */}
       <View style={{ flexDirection: 'row', marginBottom: 16, gap: 5 }}>
         {filters.map((item) => (
@@ -445,7 +446,7 @@ export default function ProviderItemOrder({ stallId }) {
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -533,8 +534,8 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   actionButtonText: {
-    color: '#fff',
-    fontWeight: '500'
+      fontFamily:Fonts.regular,
+      color: '#fff'
   },
   cancelButton: {
     backgroundColor: '#e25555'
@@ -559,13 +560,16 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
+    fontFamily:Fonts.bold,
+  
     marginBottom: 12
   },
   modalMessage: {
     fontSize: 16,
     textAlign: 'center',
-    marginBottom: 20
+    marginBottom: 20,
+    fontFamily:Fonts.regular,
   },
   modalButtons: {
     flexDirection: 'row',
@@ -578,17 +582,17 @@ const styles = StyleSheet.create({
     marginHorizontal: 8
   },
   confirmModalButton: {
-    backgroundColor: '#f69516'
+    backgroundColor: Colors.Green
   },
   confirmModalButtonText: {
-    color: '#fff',
-    fontWeight: '500'
+    color: Colors.White,
+    fontFamily: Fonts.regular
   },
   cancelModalButton: {
     backgroundColor: '#e2e2e2'
   },
   cancelModalButtonText: {
     color: '#333',
-    fontWeight: '500'
+    fontFamily: Fonts.bold
   }
 });

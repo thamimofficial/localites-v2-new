@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  View, Text, Image, TouchableOpacity, StyleSheet, Alert 
+  View, Text, Image, TouchableOpacity, StyleSheet, Alert, 
+  Platform
 } from 'react-native';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,10 +11,15 @@ import Images from '../constants/Images';
 import userLocation from '../components/UserLocation/userLocation';
 import { DateFormat } from '../components/CoreComponent/GlobalServices/DateFormat';
 import Fonts from '../constants/Font';
+import {
+  appleAuth,
+  AppleButton,
+} from '@invertase/react-native-apple-authentication';
+
 
 const Login = ({ navigation }) => {
  
- 
+ console.log("my log")
 const [communityId, setCommunityId] = useState()
 
 const [googleData, setGoogleDate] = useState()
@@ -21,8 +27,8 @@ const [googleData, setGoogleDate] = useState()
 //webClientId: '676812149305-j4k3f1qahnd2m4ebjho0d04jhemr5ha7.apps.googleusercontent.com', // Replace with your Web Client ID
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId: '941661864115-rn9hjldu30r4nnd3pk6k5ft7j5hsl7rd.apps.googleusercontent.com', // Replace with your Web Client ID
-	    iosClientId: "941661864115-h81um2o01m2boco9poll1lhqsmb36eee.apps.googleusercontent.com",
+      webClientId: '941661864115-rn9hjldu30r4nnd3pk6k5ft7j5hsl7rd.apps.googleusercontent.com',
+      iosClientId: "941661864115-h81um2o01m2boco9poll1lhqsmb36eee.apps.googleusercontent.com",
       offlineAccess: true,
       offlineAccess: true,
       forceCodeForRefreshToken: true, // Required for refresh tokens
@@ -37,6 +43,89 @@ const [googleData, setGoogleDate] = useState()
     communityIdfech()
   }, []);
 
+  const signInWithApple = async () => {
+    try {
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+      });
+
+      console.log('Apple Sign-In Success:', appleAuthRequestResponse);
+      onAppleLoginSuccess(appleAuthRequestResponse)
+//Alert.alert("Jii",appleAuthRequestResponse)
+     // Alert.alert('Apple Sign-In', `Welcome ${appleAuthRequestResponse.fullName?.givenName || 'User'}!`);
+    } catch (error) {
+      if (error.code === appleAuth.Error.CANCELED) {
+        Alert.alert('Apple Sign-In Cancelled');
+      } else {
+        console.error('Apple Sign-In Error:', error);
+        Alert.alert('Apple Sign-In Failed', error.message);
+      }
+    }
+  };
+ const onAppleLoginSuccess = async (userbyapple) => {
+  const inputData ={
+  user: userbyapple.user,
+  email: userbyapple.email,
+  name: userbyapple.fullName.givenName,
+  communityId: communityId
+}
+    try {
+      const response = await apiService.post(`/security/appleSignIn`,
+        inputData);
+
+      console.log('Apple Address:', response.data);
+      // console.log('imagStorageUrls:', response.data.config.imagStorageUrl);
+      // console.log('sessionID:', response.data.authToken.sessionId);
+      if (response.status == 200) {
+       if (response.data.authToken.errorCode == "USER_NOT_EXISTS") {
+        if(!userbyapple.email) {
+         Alert.alert('Alert','Phone -> Apple ID -> SignIn & Security -> Sigin in with Apple. Please remove apple login and try again');
+          return;
+        }
+      newAppleUser(userbyapple)}
+
+        if (response.data.authToken.communityId == communityId) {
+         console.log('User:', response.data);
+          
+        //  console.log(communityId, 'Community ID:', response.data.authToken.communityId);
+          const user = JSON.stringify(response.data);
+          
+
+            await StorageService.setItem('user', user);
+            await StorageService.setItem('imagStorageUrl', response.data.config.imagStorageUrl);
+            await StorageService.setItem('sessionId', response.data.authToken.sessionId);
+            await StorageService.setItem('userId', response.data.authToken.userId.toString()); 
+                   
+           
+            navigation.replace('Home');
+
+      
+        } else {
+          Alert.alert('Alert',  response.data.authToken.communityMessage);
+
+          AsyncStorage.clear();
+          const locationData = {
+            communityId:response.data.authToken.communityId,
+            code : response.data.authToken.communityCode
+          }
+     await StorageService.setItem("userLocation",locationData);
+     await StorageService.setItem("communityId",response.data.authToken.communityId);
+     await StorageService.setItem("code",response.data.authToken.communityCode);
+     navigation.replace('Home')
+
+
+
+          
+        }
+      }
+    
+    } catch (error) {
+      console.error('Error fetching default address:', error);
+    } finally {
+    // console.log('Default Address:');
+    }
+  };
 
 
 
@@ -143,8 +232,69 @@ const [googleData, setGoogleDate] = useState()
 
 
 
+   const newAppleUser = async (userbyapple) => {
+  const inputData ={
+          name: userbyapple.fullName.givenName,
+          email: userbyapple.email,
+          externalProvider: "apple",
+          externalUserId: userbyapple.user,
+          externalData: {
+            user:userbyapple.user,
+            email: userbyapple.email,
+            name: userbyapple.fullName.givenName
+          },
+          communityId: communityId
+        }
 
-  
+    try {
+      const response = await apiService.post(`/security/registerconsumer`,
+        inputData);
+
+      console.log('Apple Address:', response.data);
+      // console.log('imagStorageUrls:', response.data.config.imagStorageUrl);
+      // console.log('sessionID:', response.data.authToken.sessionId);
+      if (response.status == 200) {
+        if (response.data.authToken.communityId == communityId) {
+         console.log('User:', response.data);
+          
+        //  console.log(communityId, 'Community ID:', response.data.authToken.communityId);
+          const user = JSON.stringify(response.data);
+          
+
+            await StorageService.setItem('user', user);
+            await StorageService.setItem('imagStorageUrl', response.data.config.imagStorageUrl);
+            await StorageService.setItem('sessionId', response.data.authToken.sessionId);
+            await StorageService.setItem('userId', response.data.authToken.userId.toString()); 
+                   
+           
+            navigation.replace('Home');
+
+      
+        } else {
+          Alert.alert('Alert',  response.data.authToken.communityMessage);
+
+          AsyncStorage.clear();
+          const locationData = {
+            communityId:response.data.authToken.communityId,
+            code : response.data.authToken.communityCode
+          }
+     await StorageService.setItem("userLocation",locationData);
+     await StorageService.setItem("communityId",response.data.authToken.communityId);
+     await StorageService.setItem("code",response.data.authToken.communityCode);
+     navigation.replace('Home')
+
+
+
+          
+        }
+      }
+    
+    } catch (error) {
+      console.error('Error fetching default address:', error);
+    } finally {
+    // console.log('Default Address:');
+    }
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Log in within seconds</Text>
@@ -165,11 +315,30 @@ const [googleData, setGoogleDate] = useState()
       </TouchableOpacity>
 
       <Text style={styles.orText}>Or</Text>
+<TouchableOpacity
+  onPress={signInWithGoogle}
+  style={styles.googleButton}
+>
+  <View style={styles.googleContent}>
+    <Image
+      source={{
+        uri: 'https://localitesstrg.blob.core.windows.net/localites-app-ctn/7123025_logo_google_g_icon.png',
+      }}
+      style={styles.googleIcon}
+    />
+    <Text style={styles.googleButtonText}>Sign in with Google</Text>
+  </View>
+</TouchableOpacity>
 
-      <TouchableOpacity style={styles.socialButton} onPress={signInWithGoogle}>
-        <Text style={styles.socialButtonText}>Sign in with Google</Text>
-      </TouchableOpacity>
-
+      {Platform.OS === 'ios' && appleAuth.isSupported && (
+        <AppleButton
+          cornerRadius={32}
+          style={{ width: '100%', height: 45, marginTop: 10 ,fontFamily:Fonts.regular}}
+          buttonStyle={AppleButton.Style.BLACK}
+          buttonType={AppleButton.Type.SIGN_IN}
+          onPress={signInWithApple}
+        />
+      )}
       {/* <TouchableOpacity style={styles.socialButton}>
         <Text style={styles.socialButtonText}>Sign in with Apple</Text>
       </TouchableOpacity> */}
@@ -236,6 +405,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 16
   },
+  googleButton: {
+  backgroundColor: '#fff',
+  borderRadius: 32,
+  width: '100%',
+  height: 45,
+  borderWidth: 1,
+  borderColor: '#ddd',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginBottom: 10,
+},
+
+googleContent: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+
+googleIcon: {
+  width: 20,
+  height: 20,
+  marginRight: 10,
+},
+
+googleButtonText: {
+  fontSize: 16,
+  fontFamily: Fonts.regular,
+  color: '#000',
+},
+
 
 });
 

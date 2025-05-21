@@ -107,9 +107,9 @@ const GmailOtp = () => {
             <BackButton />
           </View>
 
-          <Text style={styles.title}>Enter account details</Text>
+          <Text style={styles.title}>To continue, please provider your Email</Text>
 
-          <Text style={styles.label}>Mobile Number / Email</Text>
+          <Text style={styles.label}>Enter your Email Address</Text>
           <TextInput
             style={styles.input}
             placeholder="Enter mobile or Gmail"

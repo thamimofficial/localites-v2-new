@@ -1,5 +1,5 @@
 
-import { StyleSheet, View, ScrollView, TouchableOpacity, Text, Image, FlatList, SafeAreaView } from 'react-native'
+import { StyleSheet, View, ScrollView, TouchableOpacity, Text, Image, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import FeaturedProduct from '../components/FeaturedProducts/FeaturedProduct'
 import CarouselComponent from '../components/CarouselBanner/Carousel'
@@ -20,6 +20,7 @@ import { Colors } from 'react-native/Libraries/NewAppScreen'
 import HomeHeaderRow from '../components/HomeHeaderRow/HomeHeaderRow'
 import { DateFormat } from '../components/CoreComponent/GlobalServices/DateFormat'
 import { apiBase, apiService } from '../services/api'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 
 const images = [Images.foodDrink, Images.Beauty, Images.Professional, Images.Tution];
@@ -108,7 +109,9 @@ const Home = () => {
         setLoading(true)
         const response = await apiService.post(`/portal/service/portal/dashboard`, inputData);
         if (response.data && response.data.Items) {
-          setServiceCard(response.data.Items);
+          const sortOrders = response.data.Items.sort((a, b) => a.DisplayOrder - b.DisplayOrder);
+
+                 setServiceCard(sortOrders);
           setLoading(false)
         } else {
           console.warn("No Items found in API response.");

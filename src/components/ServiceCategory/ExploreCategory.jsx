@@ -30,7 +30,9 @@ export default function ExploreCategory() {
         try {
             const response = await apiService.post(`/portal/service/portal/dashboard`, inputData);
             if (response.data && response.data.Items) {
-                setServiceCard(response.data.Items);
+                const sortOrders = response.data.Items.sort((a, b) => a.DisplayOrder - b.DisplayOrder);
+
+                 setServiceCard(sortOrders);
             } else {
                 console.warn("No Items found in API response.");
             }
@@ -44,7 +46,7 @@ export default function ExploreCategory() {
         if (ServiceBehaviorCode) {
             if (ServiceBehaviorCode === "ItemWise") {
                 navigation.navigate('ItemWiseStallsCard', { Slug, ServiceId });
-            } else if (ServiceBehaviorCode === "Bookings") {
+            } else if (ServiceBehaviorCode === "Bookings" || ServiceBehaviorCode === "Listings") {
                 navigation.navigate('BookingWiseStallsCard', { Slug, ServiceId });
             }
         }

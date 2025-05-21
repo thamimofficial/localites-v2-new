@@ -444,7 +444,7 @@
 				CODE_SIGN_ENTITLEMENTS = src/src.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = RBTBJ9R48V;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = src/Info.plist;
@@ -455,7 +455,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 17.0.0;
+				MARKETING_VERSION = 17.0.1;
 				NEW_SETTING = "";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -481,7 +481,7 @@
 				CODE_SIGN_ENTITLEMENTS = src/src.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = RBTBJ9R48V;
 				INFOPLIST_FILE = src/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Localites;
@@ -491,7 +491,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 17.0.0;
+				MARKETING_VERSION = 17.0.1;
 				NEW_SETTING = "";
 				OTHER_LDFLAGS = (
 					"$(inherited)",

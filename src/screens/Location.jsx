@@ -37,6 +37,7 @@ export default function Location() {
       const response = await apiService.post(`/community/tiertwo/list`, {});
     
       const tier2List = response.data.map(item => ({ label: item.name, value: item.id }));
+
       {tier2List.length > 0 ? setSelectedState(tier2List[0].value) :setSelectedArea("Tamil Nadu") }
       setTier2Communities(tier2List);
     } catch (error) {
@@ -50,7 +51,11 @@ export default function Location() {
 
     try {
       const response = await apiService.post(`/community/locationwise/list`, { communityId: stateId });
-      const tier3List = response.data.items.map(item => ({ label: item.Code, value: item.Id }));
+      const tier3List = response.data.items.map(item => ({
+        label: item.Code.charAt(0).toUpperCase() + item.Code.slice(1),
+        value: item.Id,
+      }));
+
 
       setTier3Communities(tier3List);
       setIsLoading(false);
@@ -132,6 +137,9 @@ export default function Location() {
         style={styles.disabledDropdown}
         dropDownContainerStyle={styles.dropdownContainerStyle}
         disabled={true}
+                   textStyle={styles.dropdownText}
+            labelStyle={styles.dropdownLabel}
+            placeholderStyle={styles.dropdownPlaceholder}
       />
       
    
@@ -149,7 +157,9 @@ export default function Location() {
           selectedItemContainerStyle = {styles.selectedItemContainer}
           dropDownContainerStyle={styles.dropdownContainerStyle}
           zIndex={2000}
-       
+          textStyle={styles.dropdownText}
+          labelStyle={styles.dropdownLabel}
+          placeholderStyle={styles.dropdownPlaceholder}
         />
      
 
@@ -167,6 +177,9 @@ export default function Location() {
           disabled = {!selectedCity}
           dropDownContainerStyle={styles.dropdownContainerStyle}
           zIndex={1000}
+           textStyle={styles.dropdownText}
+            labelStyle={styles.dropdownLabel}
+            placeholderStyle={styles.dropdownPlaceholder}
         />
       
 
@@ -229,4 +242,20 @@ const styles = StyleSheet.create({
     width: 20,
     marginTop: 500,
   },
+    dropdownText: {
+    fontFamily: Fonts.regular,
+    fontSize: 16,
+    color: Colors.Text,
+  },
+  dropdownLabel: {
+    fontFamily: Fonts.medium,
+    fontSize: 14,
+    color: Colors.Text,
+  },
+  dropdownPlaceholder: {
+    fontFamily: Fonts.regular,
+    fontSize: 14,
+    color: '#888',
+  },
+
 });
