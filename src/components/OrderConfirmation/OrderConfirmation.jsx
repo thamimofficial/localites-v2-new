@@ -462,12 +462,12 @@ const OrderLines = generateOrderLines(cart.items);
         // Alert.alert('Alert','Plz select a Delivery Slot')
         setModalVisible(true)
         setAlertTitle('Alert')
-        setAlertMessage('Plz select a Delivery Slot')
+        setAlertMessage('Please select a Delivery Slot')
       }else if(!address?.id){
         // Alert.alert('Alert','Plz select a Delivery address')
         setModalVisible(true)
         setAlertTitle('Alert')
-        setAlertMessage('Plz select a Delivery address')
+        setAlertMessage('Please select a Delivery address')
       }else{
     navigation.navigate('OrderSummary',{orderData})
       }

@@ -334,6 +334,7 @@ const getStallDetailsById = async () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <BackButton style={styles.backButton} />
       <AppBar />
 
       {isCustomized == true ?(
@@ -354,7 +355,7 @@ const getStallDetailsById = async () => {
           {/* Image Carousel */}
           <View style={styles.carouselWrapper}>
           <View style={{left:5}}>
-        <BackButton style={styles.backButton} />
+        
         </View>
             <ScrollView
               horizontal

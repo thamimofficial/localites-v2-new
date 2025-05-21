@@ -21,7 +21,7 @@ const [googleData, setGoogleDate] = useState()
 //webClientId: '676812149305-j4k3f1qahnd2m4ebjho0d04jhemr5ha7.apps.googleusercontent.com', // Replace with your Web Client ID
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId: '4941661864115-rn9hjldu30r4nnd3pk6k5ft7j5hsl7rd.apps.googleusercontent.com', // Replace with your Web Client ID
+      webClientId: '941661864115-rn9hjldu30r4nnd3pk6k5ft7j5hsl7rd.apps.googleusercontent.com', // Replace with your Web Client ID
 	    iosClientId: "941661864115-h81um2o01m2boco9poll1lhqsmb36eee.apps.googleusercontent.com",
       offlineAccess: true,
       offlineAccess: true,
