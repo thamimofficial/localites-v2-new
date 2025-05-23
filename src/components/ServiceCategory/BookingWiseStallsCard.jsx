@@ -8,7 +8,7 @@ import {
     Image,
     Dimensions
 } from 'react-native';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { apiBase, apiService } from '../../services/api';
 import userLocation from '../UserLocation/userLocation';
@@ -36,7 +36,7 @@ export default function BookingWiseStallsCard() {
     const [searchText, setSearchText] = useState('');
     const [stallBanners, setStallBanners] = useState({});
 
-    const getServiceBySlug = useCallback(async () => {
+    const getServiceBySlug = async () => {
         try {
             const response = await apiService.get(`/portal/service/${Slug}`);
             setServiceName(response.data?.serviceName || '');
@@ -44,9 +44,9 @@ export default function BookingWiseStallsCard() {
         } catch (error) {
             console.error('Error fetching service:', error);
         }
-    }, [Slug, ServiceId]);
+    };
 
-    const getBookingStalls = useCallback(async (data = {}, serviceId) => {
+    const getBookingStalls = async (data = {}, serviceId) => {
         if (!serviceId) return;
         setLoading(true);
         try {
@@ -64,7 +64,7 @@ export default function BookingWiseStallsCard() {
         } finally {
             setLoading(false);
         }
-    }, [communityId]);
+    };
 
     const handleSearch = (text) => {
         setSearchText(text);
@@ -139,35 +139,15 @@ export default function BookingWiseStallsCard() {
                                                 source={{ uri: `${apiBase.imagePath}${item.imagePath}` }}
                                             />
                                         </View>
-                                        {/* <View style={styles.frameParent}> */}
-                                            <View style={[styles.sellerNameParent, styles.frameWrapperFlexBox]}>
-                                                <Text style={[styles.sellerName, styles.offTypo, item.CommunityRank === 10 && styles.orangeShadowText]}>
-                                                    {item.name}
-                                                </Text>
-                                                {item.isVerified && <Image source={{ uri: Images.Verify }} style={styles.verifyIcon} />}
-                                            </View>
-                                            {/* <View style={[styles.frameGroup, styles.frameWrapperFlexBox]}>
-                                                <View style={[styles.locationParent, styles.frameWrapperFlexBox]}>
-                                                    <Text style={styles.location}>Delivery</Text>
-                                                    <Image
-                                                        width={16}
-                                                        height={16}
-                                                        source={item.isDeliveryEnabled ? Images.tickcircle : Images.closecircle}
-                                                    />
-                                                </View>
-                                                <View style={[styles.locationParent, styles.frameWrapperFlexBox]}>
-                                                    <Text style={styles.location}>Pickup</Text>
-                                                    <Image
-                                                        width={16}
-                                                        height={16}
-                                                        source={item.isPickupEnabled ? Images.tickcircle : Images.closecircle}
-                                                    />
-                                                </View>
-                                            </View> */}
+                                        <View style={[styles.sellerNameParent, styles.frameWrapperFlexBox]}>
+                                            <Text style={[styles.sellerName, styles.offTypo, item.CommunityRank === 10 && styles.orangeShadowText]}>
+                                                {item.name}
+                                            </Text>
+                                            {item.isVerified && <Image source={{ uri: Images.Verify }} style={styles.verifyIcon} />}
                                         </View>
                                     </View>
                                 </View>
-                            {/* </View> */}
+                            </View>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
@@ -186,7 +166,7 @@ const styles = StyleSheet.create({
     Slug: {
         fontSize: 24,
         lineHeight: 38,
-    fontFamily:Fonts.semiBold,
+        fontFamily: Fonts.semiBold,
         color: "#292d32",
         textAlign: "left"
     },
@@ -220,7 +200,7 @@ const styles = StyleSheet.create({
         flexDirection: "row"
     },
     offTypo: {
-   fontFamily:Fonts.bold,
+        fontFamily: Fonts.bold,
         textAlign: "left"
     },
     imageIcon: {
@@ -303,19 +283,18 @@ const styles = StyleSheet.create({
         height: 212,
         width: "100%",
         alignSelf: "stretch",
-        marginBottom: 15, // Add spacing between items
+        marginBottom: 15,
     },
     outsideCommunityTile: {
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-        elevation: 6, // Android shadow
+        elevation: 6,
         borderRadius: 12,
-        shadowColor: "orange", // Add orange shadow
+        shadowColor: "orange",
     },
- 
     orangeShadowImage: {
-        shadowColor: "orange", // Add orange shadow to image
+        shadowColor: "orange",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
