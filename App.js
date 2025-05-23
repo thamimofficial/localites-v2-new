@@ -1,4 +1,4 @@
-import { StyleSheet, Platform, Alert, Linking } from 'react-native';
+import { StyleSheet, Platform, Alert, Linking, StatusBar } from 'react-native';
 import React, { useEffect, useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -22,14 +22,15 @@ const App = () => {
   // In-App Update logic
   useEffect(() => {
     console.log("app.jsx")
-    if (Platform.OS === 'android') {
-      const inAppUpdates = new InAppUpdates(true); // true enables debug logs
-      inAppUpdates.checkNeedsUpdate().then(result => {
-        if (result.shouldUpdate) {
-          inAppUpdates.startUpdate({ updateType: IAUUpdateKind.FLEXIBLE });
-        }
-      });
-    } else if (Platform.OS === 'ios') {
+    // if (Platform.OS === 'android') {
+    //   const inAppUpdates = new InAppUpdates(true); // true enables debug logs
+    //   inAppUpdates.checkNeedsUpdate().then(result => {
+    //     if (result.shouldUpdate) {
+    //       inAppUpdates.startUpdate({ updateType: IAUUpdateKind.FLEXIBLE });
+    //     }
+    //   });
+    // } else
+    if (Platform.OS === 'ios') {
       VersionCheck.needUpdate().then(res => {
         if (res?.isNeeded) {
       console.log('iOS Update Available');
@@ -54,6 +55,7 @@ const App = () => {
     <Provider store={store}>
       <SafeAreaProvider>
         <NavigationContainer>
+          <StatusBar barStyle="dark-content" />
           <StackNavigation />
         </NavigationContainer>
       </SafeAreaProvider>
