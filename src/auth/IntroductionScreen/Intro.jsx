@@ -5,9 +5,9 @@ import {
 } from 'react-native';
 import styles from './IntroStyles';
 
-import { Locatites } from '../../Localites/Localites';
+import { Localites } from '../../Localites/Localites';
 import Images from '../../constants/Images';
-const { Header1, Header2, Header3, Description1, Description2, Description3 } = Locatites;
+const { Header1, Header2, Header3, Description1, Description2, Description3 } = Localites;
 
 const { width } = Dimensions.get('window');
 

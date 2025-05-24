@@ -1,9 +1,10 @@
 // HelpSupport.jsx
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Linking } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Fonts from '../../../constants/Font';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const HelpSupport = ({ navigation }) => {
   const handleOptionPress = (title) => {
@@ -24,10 +25,10 @@ const HelpSupport = ({ navigation }) => {
 
       {/* Options */}
       <View style={styles.body}>
-        {/* <TouchableOpacity style={styles.optionBox} onPress={() => navigation.navigate('CustomerService')}>
+        <TouchableOpacity style={styles.optionBox} onPress={() => navigation.navigate('CustomerService')}>
           <Text style={styles.optionText}>FAQ</Text>
           <Icon name="chevron-forward" size={20} color="#000" />
-        </TouchableOpacity> */}
+        </TouchableOpacity>
 
         <TouchableOpacity style={styles.optionBox}  onPress={() => Linking.openURL("https://www.localites.in/terms-of-service")}>
           <Text style={styles.optionText}>Terms and Conditions</Text>

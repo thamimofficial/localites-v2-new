@@ -1,27 +1,66 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, TextInput, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Fonts from '../../../constants/Font';
+import { Localites } from '../../../Localites/Localites';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 const categories = ['Customer', 'Vendors', 'Transaction'];
 
 const accordionData = [
   {
     id: '1',
-    title: 'Accordion 1',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
+    title: Localites.Question1,
+    content: Localites.Answer1,
   },
   {
     id: '2',
-    title: 'Accordion 2',
-    content: 'Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget.',
+    title: Localites.Question2,
+    content: Localites.Answer2,
   },
   {
     id: '3',
-    title: 'Accordion 3',
-    content: 'In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.',
+    title: Localites.Question3,
+    content: Localites.Answer3,
+  },
+  {
+    id: '4',
+    title: Localites.Question4,
+    content: Localites.Answer4,
+  },
+  {
+    id: '5',
+    title: Localites.Question5,
+    content: Localites.Answer5,
+  },
+  {
+    id: '6',
+    title: Localites.Question6,
+    content: Localites.Answer6,
+  },
+  {
+    id: '7',
+    title: Localites.Question7,
+    content: Localites.Answer7,
+  },
+  {
+    id: '8',
+    title: Localites.Question8,
+    content: Localites.Answer8,
+  },
+  {
+    id: '9',
+    title: Localites.Question9,
+    content: Localites.Answer9,
+  },
+  {
+    id: '10',
+    title: Localites.Question10,
+    content: Localites.Answer10,
   },
 ];
+
 
 const CustomerService = ({ navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState('Customer');
